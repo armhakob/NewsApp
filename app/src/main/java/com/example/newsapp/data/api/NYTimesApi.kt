@@ -15,3 +15,6 @@ interface NYTimesApi {
         @Query("api-key") apiKey: String
     ): ArticleResponse
 }
+
+val retrofit = ApiClient.provideRetrofit()
+val newsApiService = retrofit.create(NYTimesApi::class.java)

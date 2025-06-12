@@ -10,7 +10,7 @@ data class ArticleDocs(
 
 data class Article(
     val headline: Headline?,
-    val multimedia: List<Multimedia>?,
+    val multimedia: Multimedia?,
     val web_url: String
 )
 

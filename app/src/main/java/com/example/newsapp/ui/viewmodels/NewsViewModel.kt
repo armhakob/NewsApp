@@ -1,5 +1,6 @@
 package com.example.newsapp.ui.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,7 +11,7 @@ import com.example.newsapp.data.model.TopStory
 import kotlinx.coroutines.launch
 
 class NewsViewModel : ViewModel() {
-    private val apiKey = "8Y2yOlbcs4ufHXtCTF6fMaaU8WsMbtAe"
+    private val apiKey = "xPrwW5lZFT7cx9F0ljJKFvngygdNKGwf"
 
     private val _hotStory = MutableLiveData<TopStory?>()
 
@@ -29,15 +30,38 @@ class NewsViewModel : ViewModel() {
             }
         }
     }
-
     fun fetchLatest(query: String = "technology") {
         viewModelScope.launch {
             try {
                 val result = RetrofitInstance.api.searchArticles(query, apiKey)
-                _latestNews.value = result.response?.docs ?: emptyList()
+                val articles = result.response?.docs
+
+                if (articles.isNullOrEmpty()) {
+                    println("API call succeeded but no articles found.")
+                } else {
+                    println("Articles received: ${articles.size}")
+                }
+
+                _latestNews.value = articles ?: emptyList()
             } catch (e: Exception) {
+                println("API call failed: ${e.message}")
                 _latestNews.value = emptyList()
             }
         }
     }
+
+
+//    fun fetchLatest(query: String = "technology") {
+//        viewModelScope.launch {
+//            try {
+//                val result = RetrofitInstance.api.searchArticles(query, apiKey)
+//                Log.d("NewsViewModel", "API Success: ${result.response?.docs?.size} articles")
+//                _latestNews.value = result.response?.docs ?: emptyList()
+//            } catch (e: Exception) {
+//                Log.e("NewsViewModel", "API Error", e)
+//                _latestNews.value = emptyList()
+//            }
+//        }
+//    }
+
 }

@@ -34,7 +34,7 @@
 
                 <EditText
                     android:id="@+id/editSearch"
-                    android:layout_width="170dp"
+                    android:layout_width="208dp"
                     android:layout_height="wrap_content"
                     android:background="@drawable/search_edit_background"
                     android:drawableStart="@drawable/ic_search"
@@ -44,8 +44,8 @@
 
                 <ImageView
                     android:id="@+id/btnSearch"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="70dp"
+                    android:layout_height="34dp"
                     android:contentDescription="Search"
                     android:src="@drawable/ic_search" />
             </LinearLayout>

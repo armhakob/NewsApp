@@ -18,7 +18,6 @@ import com.bumptech.glide.Glide
 import com.example.newsapp.ui.adapters.NewsAdapter
 import com.example.newsapp.ui.viewmodels.NewsViewModel
 
-
 class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: NewsViewModel
     private lateinit var adapter: NewsAdapter
@@ -35,10 +34,8 @@ class MainActivity : AppCompatActivity() {
         val swipeRefresh = findViewById<SwipeRefreshLayout>(R.id.swipeRefresh)
         val editSearch = findViewById<EditText>(R.id.editSearch)
 
-        recycler.layoutManager = LinearLayoutManager(this)
-
-        // Initialize adapter with empty list
         adapter = NewsAdapter(emptyList())
+        recycler.layoutManager = LinearLayoutManager(this)
         recycler.adapter = adapter
 
         swipeRefresh.setOnRefreshListener {
@@ -50,30 +47,30 @@ class MainActivity : AppCompatActivity() {
         viewModel.hotStory.observe(this) { story ->
             txtHotTitle.text = story?.title ?: "No hot topic"
             val imgUrl = story?.multimedia?.firstOrNull()?.url
-            if (imgUrl != null) {
-                Glide.with(this).load(imgUrl).into(imgHot)
-            } else {
-                imgHot.setImageResource(R.drawable.placeholder)
-            }
+            val fullUrl = if (!imgUrl.isNullOrEmpty()) {
+                if (imgUrl.startsWith("http")) imgUrl else "https://www.nytimes.com/$imgUrl"
+            } else null
+
+            Glide.with(this)
+                .load(fullUrl)
+                .placeholder(R.drawable.placeholder)
+                .error(R.drawable.placeholder)
+                .into(imgHot)
         }
 
-        // Observe latest news and update adapter data
         viewModel.latestNews.observe(this) { articles ->
             adapter.updateData(articles)
         }
 
-        // Add text watcher for search filtering
         editSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
             override fun afterTextChanged(s: Editable?) {
-                val query = s?.toString() ?: ""
-                adapter.filter(query)
+                adapter.filter(s.toString())
             }
         })
 
-        // Initial data fetch
+        // Initial fetch
         viewModel.fetchHotStory()
         viewModel.fetchLatest()
     }
